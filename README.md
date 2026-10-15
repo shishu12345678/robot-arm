@@ -11,7 +11,7 @@ A_i=T_x(a_i)R_x(\alpha_i)R_z(q_i+\theta_{0,i})T_z(d_i),\qquad
 {}^BT_F=\prod_{i=1}^{6}A_i.
 \]
 
-参数来自控制器 `get_calib_DH`，参数次序为 `a, alpha, d, theta0`，长度单位 m、角度单位 rad。每条样本只提供实际关节角和 SDK 法兰位姿，模型参数单独从本地配置读取，不会被样本覆盖。SDK 返回的法兰姿态按固定 XYZ RPY 解释：`R=Rz(yaw)Ry(pitch)Rx(roll)`。
+参数来自控制器 `get_calib_DH`，参数次序为 `a, alpha, d, theta0`，长度单位 m、角度单位 rad。右、左臂标定参数和各一条脱敏静态样本已获用户授权纳入本公开仓库，控制器地址和序列号未纳入。参数配置独立于每条姿态样本，样本不能覆盖模型。SDK 返回的法兰姿态按固定 XYZ RPY 解释：`R=Rz(yaw)Ry(pitch)Rx(roll)`。
 
 本程序只比较每台机械臂自身基坐标系下的法兰。它不验证双臂世界系外参、工具 TCP、实体外壳碰撞或外部测量得到的绝对精度。
 
@@ -19,14 +19,14 @@ A_i=T_x(a_i)R_x(\alpha_i)R_z(q_i+\theta_{0,i})T_z(d_i),\qquad
 
 在厂家 RPC 样例环境中运行已有的只读采集程序。每个 JSON 应含 `get_actual_joints_position`、`get_flange_pose`、`get_calib_DH`、`target`、`collected_at_utc` 和注明 `read_only` 的 `note`。每个姿态应停稳后再采集。请备份现有文件，并把每次采样另存为独立 JSON；旧版采集器会覆盖固定文件名，左臂的目标标签也要改为 `left_slave_arm`。
 
-从每台机械臂的本地快照提取模型配置：
+如果你重新采集了标定参数，可从每台机械臂的本地快照提取配置：
 
 ```powershell
 python extract_mdh_config.py path\to\right_snapshot.json --arm right_main_arm
 python extract_mdh_config.py path\to\left_snapshot.json --arm left_slave_arm
 ```
 
-生成的 `config/local_*.json` 只包含标定 MDH 参数，已加入 Git 忽略规则。真实控制器参数和姿态数据留在本地，不提交到公开仓库。
+生成的 `config/local_*.json` 只包含标定 MDH 参数，已加入 Git 忽略规则。验证时可用 `--config config/local_right_main_arm.json` 等参数显式选择本地配置。
 
 实际采样应覆盖各关节变化及组合姿态；不要只改变 J1。工具不规定机械臂运动范围或通过阈值，阈值应在实验方案中依据测量分辨率预先确定。
 
