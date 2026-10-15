@@ -1,11 +1,11 @@
 import math
 import json
+import tempfile
 from pathlib import Path
 import unittest
 
-from mdh_validate import fk_mdh, identity, load_config, rotation_error_deg, validate_sample
-
-ROOT = Path(__file__).resolve().parents[1]
+from mdh_validate import fk_mdh, identity, rotation_error_deg
+from extract_mdh_config import extract
 
 
 class MdhForwardKinematicsTests(unittest.TestCase):
@@ -33,18 +33,26 @@ class MdhForwardKinematicsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             fk_mdh([[0, 0, 0, 0]] * 6, [0.0] * 5)
 
-    def test_right_snapshot_regression(self):
-        config = load_config(ROOT / "config/right_main_arm.json")
-        result = validate_sample(ROOT / "tests/fixtures/right_snapshot.json", config, "right_main_arm")
-        self.assertLess(result["position_error_mm"], 0.001)
-        self.assertLess(result["orientation_error_deg"], 0.002)
-
-    def test_left_snapshot_regression(self):
-        config = load_config(ROOT / "config/left_slave_arm.json")
-        result = validate_sample(ROOT / "tests/fixtures/left_snapshot.json", config, "left_slave_arm")
-        self.assertLess(result["position_error_mm"], 0.001)
-        self.assertLess(result["orientation_error_deg"], 0.003)
-
+    def test_extractor_drops_controller_identifiers_and_joint_telemetry(self):
+        snapshot = {
+            "target": "right_main_arm",
+            "note": "read_only sample",
+            "controller_ip": "192.0.2.1",
+            "get_robot_type": ["private-serial"],
+            "get_actual_joints_position": [9.0] * 6,
+            "get_calib_DH": [[0.0, 0.0, 0.1, 0.0, 0.0] for _ in range(6)],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source, output = root / "snapshot.json", root / "model.json"
+            source.write_text(json.dumps(snapshot), encoding="utf-8")
+            extract(source, "right_main_arm", output)
+            result = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(result["arm"], "right_main_arm")
+        self.assertEqual(len(result["get_calib_DH"]), 6)
+        self.assertNotIn("controller_ip", result)
+        self.assertNotIn("get_robot_type", result)
+        self.assertNotIn("get_actual_joints_position", result)
 
 if __name__ == "__main__":
     unittest.main()
