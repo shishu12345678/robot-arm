@@ -4,8 +4,10 @@ import tempfile
 from pathlib import Path
 import unittest
 
-from mdh_validate import fk_mdh, identity, rotation_error_deg
+from mdh_validate import fk_mdh, identity, load_config, rotation_error_deg, validate_sample
 from extract_mdh_config import extract
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class MdhForwardKinematicsTests(unittest.TestCase):
@@ -53,6 +55,18 @@ class MdhForwardKinematicsTests(unittest.TestCase):
         self.assertNotIn("controller_ip", result)
         self.assertNotIn("get_robot_type", result)
         self.assertNotIn("get_actual_joints_position", result)
+
+    def test_right_robot_snapshot_regression(self):
+        config = load_config(ROOT / "config/right_main_arm.json")
+        result = validate_sample(ROOT / "tests/fixtures/right_snapshot.json", config, "right_main_arm")
+        self.assertLess(result["position_error_mm"], 0.001)
+        self.assertLess(result["orientation_error_deg"], 0.002)
+
+    def test_left_robot_snapshot_regression(self):
+        config = load_config(ROOT / "config/left_slave_arm.json")
+        result = validate_sample(ROOT / "tests/fixtures/left_snapshot.json", config, "left_slave_arm")
+        self.assertLess(result["position_error_mm"], 0.001)
+        self.assertLess(result["orientation_error_deg"], 0.003)
 
 if __name__ == "__main__":
     unittest.main()
