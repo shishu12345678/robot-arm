@@ -1,0 +1,16 @@
+{
+  "arm": "right_main_arm",
+  "length_unit": "m",
+  "joint_angle_unit": "rad",
+  "pose_orientation_convention": "fixed XYZ RPY; R=Rz(yaw)Ry(pitch)Rx(roll)",
+  "transform_convention": "A_i=Tx(a_i)Rx(alpha_i)Rz(q_i+theta0_i)Tz(d_i)",
+  "parameter_source": "GCR3-618 right main arm get_calib_DH snapshot collected 2026-10-14",
+  "get_calib_DH": [
+    [0.0, 0.0, 0.1115, 0.0, 0.0],
+    [0.0010637043889285124, -1.57185611115, 0.14922393253098565, -1.5707963267949, 0.0],
+    [0.2699612391452964, 0.0000695150221484, 0.0, 0.0, 0.0],
+    [0.24798424526303617, 0.00333639721096, 0.0, 1.5707963267949, 0.0],
+    [0.0005502197370219599, 1.57664841258, 0.10002594038450634, 0.0, 0.0],
+    [0.00026963659962614823, -1.57363209388, 0.10332506947156674, 0.0, 0.0]
+  ]
+}
