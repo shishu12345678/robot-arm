@@ -1,0 +1,16 @@
+{
+  "arm": "left_slave_arm",
+  "length_unit": "m",
+  "joint_angle_unit": "rad",
+  "pose_orientation_convention": "fixed XYZ RPY; R=Rz(yaw)Ry(pitch)Rx(roll)",
+  "transform_convention": "A_i=Tx(a_i)Rx(alpha_i)Rz(q_i+theta0_i)Tz(d_i)",
+  "parameter_source": "GCR3-618 left slave arm get_calib_DH snapshot collected 2026-10-14",
+  "get_calib_DH": [
+    [0.0, 0.0, 0.1115, 0.0, 0.0],
+    [0.000246887058594, -1.57108841429, 0.149057941409, -1.5707963267949, 0.0],
+    [0.26998084073, 0.00189460499154, 0.0, 0.0, 0.0],
+    [0.248028485786, 0.0000755419887782, 0.0, 1.5707963267949, 0.0],
+    [0.0000554785062053, 1.56752193172, 0.0999393872147, 0.0, 0.0],
+    [0.0000345486564686, -1.57277855451, 0.103205291791, 0.0, 0.0]
+  ]
+}
