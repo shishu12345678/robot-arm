@@ -135,12 +135,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("samples", nargs="+", type=Path, help="read-only sample JSON files and/or directories")
     parser.add_argument("--arm", choices=("right_main_arm", "left_slave_arm"), required=True)
-    parser.add_argument("--config", type=Path, help="local model config; defaults to config/local_<arm>.json")
+    parser.add_argument("--config", type=Path, help="model config; defaults to config/<arm>.json")
     parser.add_argument("--output", type=Path, default=Path("results"))
     args = parser.parse_args()
-    config_path = args.config or Path("config") / f"local_{args.arm}.json"
+    config_path = args.config or Path("config") / f"{args.arm}.json"
     if not config_path.exists():
-        parser.error(f"model config not found: {config_path}; create it from a read-only controller snapshot using extract_mdh_config.py")
+        parser.error(f"model config not found: {config_path}; create a local config from a read-only controller snapshot using extract_mdh_config.py and pass it with --config")
     config = load_config(config_path)
     paths = sample_paths(args.samples)
     if not paths:
